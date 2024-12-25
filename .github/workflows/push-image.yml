@@ -1,0 +1,44 @@
+name: Build and Push Docker Image to Docker Hub
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Git tag to build from"
+        required: true
+        default: "main"
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Authenticate with Docker Hub
+      run: |
+        echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+
+    - name: Clone Remote Repository
+      run: |
+        git clone --branch ${{ github.event.inputs.tag }} --single-branch https://github.com/unitycatalog/unitycatalog.git remote-repo
+
+    - name: Build UC Docker Image
+      run: |
+        cd remote-repo
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/unity-catalog:${{ github.event.inputs.tag }} \
+                     -t ${{ secrets.DOCKER_USERNAME }}/unity-catalog:latest .
+
+    - name: Push UC Docker Image to Docker Hub
+      run: |
+        docker push ${{ secrets.DOCKER_USERNAME }}/unity-catalog:${{ github.event.inputs.tag }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/unity-catalog:latest
+
+    - name: Build UC UI Docker Image
+      run: |
+        cd remote-repo/ui
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/unity-catalog-ui:${{ github.event.inputs.tag }} \
+                     -t ${{ secrets.DOCKER_USERNAME }}/unity-catalog-ui:latest .
+
+    - name: Push UC UI Docker Image to Docker Hub
+      run: |
+        docker push ${{ secrets.DOCKER_USERNAME }}/unity-catalog-ui:${{ github.event.inputs.tag }}
+        docker push ${{ secrets.DOCKER_USERNAME }}/unity-catalog-ui:latest
