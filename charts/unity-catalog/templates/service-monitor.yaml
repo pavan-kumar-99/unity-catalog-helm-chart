@@ -1,0 +1,34 @@
+{{- if and .Values.server.metrics.enabled .Values.server.metrics.serviceMonitor.enabled }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "unity-catalog.fullname" . }}
+  labels: 
+    {{- include "unity-catalog.labels" . | nindent 4 }}
+    app.kubernetes.io/component: unity-catalog
+  {{- with .Values.server.metrics.serviceMonitor.Annotations }}
+  annotations:
+    {{- toYaml . | nindent 8 }}
+  {{- end }}
+spec:
+  jobLabel: {{ .Values.server.metrics.serviceMonitor.jobLabel | quote }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: unity-catalog
+      {{- include "unity-catalog.selectorLabels" . | nindent 6 }}
+  endpoints:
+    - port: http-metrics
+      path: "/metrics"
+      {{- if .Values.server.metrics.serviceMonitor.interval }}
+      interval: {{ .Values.server.metrics.serviceMonitor.interval }}
+      {{- end }}
+      {{- if .Values.server.metrics.serviceMonitor.scrapeTimeout }}
+      scrapeTimeout: {{ .Values.server.metrics.serviceMonitor.scrapeTimeout }}
+      {{- end }}
+      {{- if .Values.server.metrics.serviceMonitor.honorLabels }}
+      honorLabels: {{ .Values.server.metrics.serviceMonitor.honorLabels }}
+      {{- end }}
+  namespaceSelector:
+    matchNames:
+    - {{ .Release.Namespace | quote }}
+{{- end }}
