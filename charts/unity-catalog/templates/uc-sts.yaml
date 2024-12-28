@@ -33,6 +33,12 @@ spec:
       serviceAccountName: {{ include "unity-catalog.serviceAccountName" . }}-server
       securityContext:
         {{- toYaml .Values.server.podSecurityContext | nindent 8 }}
+      {{- if .Values.server.initContainers }}
+      initContainers:
+        {{- with .Values.server.initContainers }}
+          {{- toYaml . | nindent 12 }}
+        {{- end }}
+      {{- end }}
       containers:
         - name: {{ .Chart.Name }}-server
           securityContext:
