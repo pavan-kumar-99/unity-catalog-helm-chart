@@ -22,9 +22,13 @@ server:
 
   # Extra JARS to be downloaded from Maven repo
   extraJars:
-    - name: mysql-connector-j
-      version: 9.1.0
-      url: "https://repo.maven.apache.org/maven2/com/mysql/mysql-connector-j/9.1.0/mysql-connector-j-9.1.0.jar"
+  - name: "mysql-connector-j"
+    version: 9.1.0
+    url: "https://repo.maven.apache.org/maven2/com/mysql/mysql-connector-j/9.1.0/mysql-connector-j-9.1.0.jar"
+  - name: postgresql-connector
+    version: 42.3.3
+    url: "https://repo.maven.apache.org/maven2/org/postgresql/postgresql/42.3.3/postgresql-42.3.3.jar"
+
 
   # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   imagePullSecrets: []
@@ -227,11 +231,25 @@ server:
   #   mountPath: "/etc/foo"
   #   readOnly: true
 
+  # nodeSelector: {}  
+  # nodeSelector allows you to constrain which nodes your pods are eligible to be scheduled based on labels on nodes. 
+  # For example, you could assign a label like `key=value` to specific nodes and use `nodeSelector` to ensure pods are scheduled to these nodes. 
+  # Leave it empty to use the default scheduling rules.
   nodeSelector: {}
 
+  # tolerations: []  
+  # Tolerations allow the scheduler to schedule pods onto nodes with matching taints. 
+  # This is useful for avoiding certain nodes unless required. 
+  # For example, you can define tolerations if you want a pod to run on a node with a taint.
+  # Leave it empty to avoid any special handling for taints.
   tolerations: []
 
+  # affinity: {}  
+  # Affinity allows you to specify rules for pod placement based on node or other pod characteristics. 
+  # It includes two types of rules: node affinity (for scheduling on specific nodes) and pod affinity/anti-affinity (for placing pods relative to other pods).
+  # Leave it empty to allow default scheduling behavior, or define rules to fine-tune pod placement.
   affinity: {}
+
 
   # To configure the UC Catalog to use MYSQL as its backend. Set this to true when the server replicaCount > 1
   mysql:
@@ -367,8 +385,22 @@ ui:
   #   mountPath: "/etc/foo"
   #   readOnly: true
 
+  # nodeSelector: {}  
+  # nodeSelector allows you to constrain which nodes your pods are eligible to be scheduled based on labels on nodes. 
+  # For example, you could assign a label like `key=value` to specific nodes and use `nodeSelector` to ensure pods are scheduled to these nodes. 
+  # Leave it empty to use the default scheduling rules.
   nodeSelector: {}
 
+  # tolerations: []  
+  # Tolerations allow the scheduler to schedule pods onto nodes with matching taints. 
+  # This is useful for avoiding certain nodes unless required. 
+  # For example, you can define tolerations if you want a pod to run on a node with a taint.
+  # Leave it empty to avoid any special handling for taints.
   tolerations: []
 
+  # affinity: {}  
+  # Affinity allows you to specify rules for pod placement based on node or other pod characteristics. 
+  # It includes two types of rules: node affinity (for scheduling on specific nodes) and pod affinity/anti-affinity (for placing pods relative to other pods).
+  # Leave it empty to allow default scheduling behavior, or define rules to fine-tune pod placement.
   affinity: {}
+

@@ -35,7 +35,6 @@ spec:
         {{- with .Values.ui.initContainers }}
           {{- toYaml . | nindent 12 }}
         {{- end }}
-      {{- end }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:

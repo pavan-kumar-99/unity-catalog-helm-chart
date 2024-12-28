@@ -1,4 +1,4 @@
-{{- if and .Values.server.create ( .Values.server.replicaCount | int | gt 1) }}
+{{- if and .Values.server.create (.Values.server.replicaCount | int | gt 1) }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -32,9 +32,25 @@ spec:
       securityContext:
         {{- toYaml .Values.ui.podSecurityContext | nindent 8 }}
       initContainers:
-        {{- with .Values.server.initContainers }}
-          {{- toYaml . | nindent 12 }}
+        {{- if .Values.server.extraJars }}
+        - name: init-classpath
+          image: busybox
+          volumeMounts:
+            - name: classpath-volume
+              mountPath: /home/unitycatalog/jars
+          command:
+            - "sh"
+            - "-c"
+            - |
+              {{- range .Values.server.extraJars }}
+              curl -L -o /home/unitycatalog/jars/{{ .name }}-{{ .version }}.jar "{{ .url }}" && \
+              echo "$(cat /home/unitycatalog/server/target)$(find /home/unitycatalog/jars -name '*.jar' -exec echo -n ':{}' \;)" > /home/unitycatalog/jars/classpath
+              {{- end }}
         {{- end }}
+      {{- if .Values.server.initContainers }}
+        {{- with .Values.server.initContainers }}
+        {{- toYaml . | nindent 12 }}
+      {{- end }}
       {{- end }}
       containers:
         - name: {{ .Chart.Name }}
@@ -43,10 +59,10 @@ spec:
           image: "{{ .Values.ui.image.repository }}:{{ .Values.ui.image.tag | default .Chart.AppVersion }}"
           imagePullPolicy: {{ .Values.ui.image.pullPolicy }}
           env:
-          - name: PROXY_HOST
-            valueFrom:
-              fieldRef:
-                fieldPath: status.podIP
+            - name: PROXY_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
           ports:
             - name: http
               containerPort: {{ .Values.ui.service.port }}
@@ -57,13 +73,16 @@ spec:
             {{- toYaml .Values.ui.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.ui.resources | nindent 12 }}
-          {{- with .Values.ui.volumeMounts }}
           volumeMounts:
             - name: empty-dir
               mountPath: /tmp
-          {{- with .Values.server.volumeMounts }}
+            {{- if .Values.server.extraJars }}
+            - name: classpath-volume
+              mountPath: /home/unitycatalog/jars
+            {{- end }}
+            {{- with .Values.ui.volumeMounts }}
             {{- toYaml . | nindent 12 }}
-          {{- end }}
+            {{- end }}
             {{- if .Values.server.conf.log4j2 }}
             - mountPath: /home/unitycatalog/etc/conf/log4j2server.log4j2.properties
               name: custom-configuration
@@ -82,28 +101,31 @@ spec:
       volumes:
         - name: empty-dir
           emptyDir: {}
-      {{- with .Values.server.volumes }}
+        {{- if .Values.server.extraJars }}
+        - name: classpath-volume
+          emptyDir: {}
+        {{- end }}
+        {{- with .Values.server.volumes }}
         {{- toYaml . | nindent 8 }}
-      {{- end }}
+        {{- end }}
         {{- if .Values.server.conf.createCustomConfig }}
         - name: custom-configuration
           configMap:
             name: {{ include "unity-catalog.fullname" . }}-custom-config
             items:
-            {{- if .Values.server.conf.log4j2 }}
+              {{- if .Values.server.conf.log4j2 }}
               - key: log4j2server.log4j2.properties
                 path: log4j2server.log4j2.properties
-            {{- end }}
-            {{- if .Values.server.conf.hibernate }}
+              {{- end }}
+              {{- if .Values.server.conf.hibernate }}
               - key: hibernate.properties
                 path: hibernate.properties
-            {{- end }}
-            {{- if .Values.server.conf.server }}
+              {{- end }}
+              {{- if .Values.server.conf.server }}
               - key: server.properties
                 path: server.properties
-            {{- end }}
+              {{- end }}
         {{- end }}
-      {{- end }}
       {{- with .Values.ui.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
