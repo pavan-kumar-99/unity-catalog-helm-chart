@@ -49,9 +49,12 @@ spec:
             {{- toYaml .Values.server.readinessProbe | nindent 12 }}
           resources:
             {{- toYaml .Values.server.resources | nindent 12 }}
-          {{- with .Values.server.volumeMounts }}
           volumeMounts:
+            - name: empty-dir
+              mountPath: /tmp
+          {{- with .Values.server.volumeMounts }}
             {{- toYaml . | nindent 12 }}
+          {{- end }}
             {{- if .Values.server.conf.log4j2 }}
             - mountPath: /home/unitycatalog/etc/conf/log4j2server.log4j2.properties
               name: custom-configuration
@@ -67,10 +70,12 @@ spec:
               name: custom-configuration
               subPath: server.properties
             {{- end }}
-          {{- end }}
-      {{- with .Values.server.volumes }}
       volumes:
+        - name: empty-dir
+          emptyDir: {}
+      {{- with .Values.server.volumes }}
         {{- toYaml . | nindent 8 }}
+      {{- end }}
         {{- if .Values.server.conf.createCustomConfig }}
         - name: custom-configuration
           configMap:
@@ -89,7 +94,6 @@ spec:
                 path: server.properties
             {{- end }}
         {{- end }}
-      {{- end }}
       {{- with .Values.server.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

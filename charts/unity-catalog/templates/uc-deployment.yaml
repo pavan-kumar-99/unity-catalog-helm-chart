@@ -54,11 +54,50 @@ spec:
             {{- toYaml .Values.ui.resources | nindent 12 }}
           {{- with .Values.ui.volumeMounts }}
           volumeMounts:
+            - name: empty-dir
+              mountPath: /tmp
+          {{- with .Values.server.volumeMounts }}
             {{- toYaml . | nindent 12 }}
           {{- end }}
-      {{- with .Values.ui.volumes }}
+            {{- if .Values.server.conf.log4j2 }}
+            - mountPath: /home/unitycatalog/etc/conf/log4j2server.log4j2.properties
+              name: custom-configuration
+              subPath: log4j2server.log4j2.properties
+            {{- end }}
+            {{- if .Values.server.conf.hibernate }}
+            - mountPath: /home/unitycatalog/etc/conf/hibernate.properties
+              name: custom-configuration
+              subPath: hibernate.properties
+            {{- end }}
+            {{- if .Values.server.conf.server }}
+            - mountPath: /home/unitycatalog/etc/conf/server.properties
+              name: custom-configuration
+              subPath: server.properties
+            {{- end }}
       volumes:
+        - name: empty-dir
+          emptyDir: {}
+      {{- with .Values.server.volumes }}
         {{- toYaml . | nindent 8 }}
+      {{- end }}
+        {{- if .Values.server.conf.createCustomConfig }}
+        - name: custom-configuration
+          configMap:
+            name: {{ include "unity-catalog.fullname" . }}-custom-config
+            items:
+            {{- if .Values.server.conf.log4j2 }}
+              - key: log4j2server.log4j2.properties
+                path: log4j2server.log4j2.properties
+            {{- end }}
+            {{- if .Values.server.conf.hibernate }}
+              - key: hibernate.properties
+                path: hibernate.properties
+            {{- end }}
+            {{- if .Values.server.conf.server }}
+              - key: server.properties
+                path: server.properties
+            {{- end }}
+        {{- end }}
       {{- end }}
       {{- with .Values.ui.nodeSelector }}
       nodeSelector:
