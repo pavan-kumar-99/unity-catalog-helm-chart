@@ -20,15 +20,25 @@ server:
   ##    imagePullPolicy: Always
   ##    command: ['sh', '-c', 'echo "hello world"']
 
-  # Extra JARS to be downloaded from Maven repo - CURL
+  # extraJars is a configuration block to add custom jars (e.g., database connectors or additional libraries) to your application.
+  # By default, extra jars are not included unless explicitly enabled. You can specify the name, version, and URL of the jar files 
+  # that need to be included during the deployment. 
+
   extraJars:
+  # - name: "mysql-connector-j"  
+  #   version: 9.1.0  
+  #   url: "https://repo.maven.apache.org/maven2/com/mysql/mysql-connector-j/9.1.0/mysql-connector-j-9.1.0.jar"  
+  # This entry defines the MySQL connector jar to be included. You can specify the name, version, and URL to the jar file location.
   - name: "mysql-connector-j"
     version: 9.1.0
     url: "https://repo.maven.apache.org/maven2/com/mysql/mysql-connector-j/9.1.0/mysql-connector-j-9.1.0.jar"
+  # - name: postgresql-connector  
+  #   version: 42.3.3  
+  #   url: "https://repo.maven.apache.org/maven2/org/postgresql/postgresql/42.3.3/postgresql-42.3.3.jar"  
+  # This entry defines the PostgreSQL connector jar to be included. You can specify the name, version, and URL to the jar file location.
   - name: postgresql-connector
     version: 42.3.3
     url: "https://repo.maven.apache.org/maven2/org/postgresql/postgresql/42.3.3/postgresql-42.3.3.jar"
-
 
   # This is for the secretes for pulling an image from a private repository more information can be found here: https://kubernetes.io/docs/tasks/configure-pod-container/pull-image-private-registry/
   imagePullSecrets: []
@@ -37,7 +47,7 @@ server:
   fullnameOverride: ""
   # Custom config
   conf:
-    createCustomConfig: true
+    createCustomConfig: false
 
     log4j2: |-
       status = warn
@@ -209,6 +219,61 @@ server:
     httpGet:
       path: /
       port: http
+
+  metrics:
+    ## @param metrics.enabled Enable the export of Prometheus metrics
+    ##
+    enabled: false
+    ## @param metrics.podAnnotations [object] Annotations for metrics scraping
+    ##
+    podAnnotations:
+      prometheus.io/scrape: "true"
+      prometheus.io/port: "{{ .Values.containerPorts.metrics }}"
+    ## Prometheus Operator ServiceMonitor configuration
+    ##
+    serviceMonitor:
+      ## @param metrics.serviceMonitor.enabled if `true`, creates a Prometheus Operator ServiceMonitor (also requires `metrics.enabled` to be `true`)
+      ##
+      enabled: false
+      ## @param metrics.serviceMonitor.namespace Namespace in which Prometheus is running
+      ##
+      namespace: ""
+      ## @param metrics.serviceMonitor.annotations Additional custom annotations for the ServiceMonitor
+      ##
+      annotations: {}
+      ## @param metrics.serviceMonitor.labels Extra labels for the ServiceMonitor
+      ##
+      labels: {}
+      ## @param metrics.serviceMonitor.jobLabel The name of the label on the target service to use as the job name in Prometheus
+      ##
+      jobLabel: ""
+      ## @param metrics.serviceMonitor.honorLabels honorLabels chooses the metric's labels on collisions with target labels
+      ##
+      honorLabels: false
+      ## @param metrics.serviceMonitor.interval Interval at which metrics should be scraped.
+      ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+      ## e.g:
+      ## interval: 10s
+      ##
+      interval: ""
+      ## @param metrics.serviceMonitor.scrapeTimeout Timeout after which the scrape is ended
+      ## ref: https://github.com/coreos/prometheus-operator/blob/master/Documentation/api.md#endpoint
+      ## e.g:
+      ## scrapeTimeout: 10s
+      ##
+      scrapeTimeout: ""
+      ## @param metrics.serviceMonitor.metricRelabelings Specify additional relabeling of metrics
+      ##
+      metricRelabelings: []
+      ## @param metrics.serviceMonitor.relabelings Specify general relabeling
+      ##
+      relabelings: []
+      ## @param metrics.serviceMonitor.selector Prometheus instance selector labels
+      ## ref: https://github.com/bitnami/charts/tree/main/bitnami/prometheus-operator#prometheus-configuration
+      ## selector:
+      ##   prometheus: my-prometheus
+      ##
+      selector: {}
 
   #This section is for setting up autoscaling more information can be found here: https://kubernetes.io/docs/concepts/workloads/autoscaling/
   autoscaling:

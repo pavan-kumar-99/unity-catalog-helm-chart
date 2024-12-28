@@ -47,7 +47,7 @@ helm delete --namespace unity-catalog my-catalog
 | server.imagePullSecrets | list | `[]` |  |
 | server.nameOverride | string | `""` |  |
 | server.fullnameOverride | string | `""` |  |
-| server.conf.createCustomConfig | bool | `true` |  |
+| server.conf.createCustomConfig | bool | `false` |  |
 | server.conf.log4j2 | string | `"status = warn\nappenders = rollingFile\n\nappender.rollingFile.type = RollingFile\nappender.rollingFile.name = RollingFile\nappender.rollingFile.fileName = etc/logs/server.log\nappender.rollingFile.filePattern = etc/logs/server-%d{MM-dd-yyyy-HH-mm-ss}-%i.log.gz\nappender.rollingFile.layout.type = PatternLayout\nappender.rollingFile.layout.pattern = %d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n\n\nappender.rollingFile.policies.type = Policies\nappender.rollingFile.policies.time.type = TimeBasedTriggeringPolicy\nappender.rollingFile.policies.time.interval = 1\nappender.rollingFile.policies.size.type = SizeBasedTriggeringPolicy\nappender.rollingFile.policies.size.size = 10MB\n\nappender.rollingFile.strategy.type = DefaultRolloverStrategy\nappender.rollingFile.strategy.max = 5\nappender.rollingFile.strategy.fileIndex = max\n\nappender.rollingFile.strategy.action.type = Delete\nappender.rollingFile.strategy.action.basePath = etc/logs\nappender.rollingFile.strategy.action.condition.type = IfFileName\nappender.rollingFile.strategy.action.condition.glob = server-*.log.gz\nappender.rollingFile.strategy.action.ifAny.type = IfAccumulatedFileCount\nappender.rollingFile.strategy.action.ifAny.exceeds = 5\n\nrootLogger.level = info\nrootLogger.appenderRefs = rollingFile\nrootLogger.appenderRef.rollingFile.ref = RollingFile"` |  |
 | server.conf.hibernate | string | `"hibernate.connection.driver_class=org.h2.Driver\nhibernate.connection.url=jdbc:h2:file:./etc/db/h2db;DB_CLOSE_DELAY=-1\nhibernate.hbm2ddl.auto=update\nhibernate.show_sql=false\nhibernate.archive.autodetection=class\nhibernate.use_sql_comments=true\norg.hibernate.SQL=INFO\norg.hibernate.type.descriptor.sql.BasicBinder=TRACE"` |  |
 | server.conf.server | string | `"server.env=dev\n## Identity Provider authorization parameters\n# examples:\n# authorization=enable\n# authorization-url=https://accounts.google.com/o/oauth2/auth\n# token-url=https://oauth2.googleapis.com/token\n# client-id=111122223333-abab1212cdcd3434.apps.googleusercontent.com\n# client-secret=GOCSPX-ababfoobarcdcd-5q\nserver.authorization=disable\nserver.authorization-url=\nserver.token-url=\nserver.client-id=\nserver.client-secret=\nserver.redirect-port=\n# D-Days H-Hours M-Minutes S-Seconds (P5D = 5 days,PT5H = 5 hours, PT5M = 5 minutes, PT5S = 5 seconds)\nserver.cookie-timeout=P5D\n\n# Define the model storage root.  Cloud storage or file based allowed.\n# If no root specified, the current working directory of the server is used.\n\n#storage-root.models=s3://my-s3-bucket/root\n#storage-root.models=abfs://file_system@account_name.dfs.core.windows.net/root\n#storage-root.models=gs://my-gc-bucket/root\nstorage-root.models=file:/tmp/ucroot\n\n## S3 Storage Config (Multiple configs can be added by incrementing the index)\ns3.bucketPath.0=\ns3.region.0=\ns3.awsRoleArn.0=\n# Optional (If blank, it will use DefaultCredentialsProviderChain)\ns3.accessKey.0=\ns3.secretKey.0=\n# Test Only (If you provide a session token, it will just use those session creds, no downscoping)\ns3.sessionToken.0=\n\n## ADLS Storage Config (Multiple configs can be added by incrementing the index)\nadls.storageAccountName.0=\nadls.tenantId.0=\nadls.clientId.0=\nadls.clientSecret.0=\n\n## GCS Storage Config (Multiple configs can be added by incrementing the index)\ngcs.bucketPath.0=\n# Optional (If blank, it will use Default Application chain to find credentials)\ngcs.jsonKeyFilePath.0="` |  |
@@ -77,6 +77,20 @@ helm delete --namespace unity-catalog my-catalog
 | server.readinessProbe.timeoutSeconds | int | `10` |  |
 | server.readinessProbe.httpGet.path | string | `"/"` |  |
 | server.readinessProbe.httpGet.port | string | `"http"` |  |
+| server.metrics.enabled | bool | `false` |  |
+| server.metrics.podAnnotations."prometheus.io/scrape" | string | `"true"` |  |
+| server.metrics.podAnnotations."prometheus.io/port" | string | `"{{ .Values.containerPorts.metrics }}"` |  |
+| server.metrics.serviceMonitor.enabled | bool | `false` |  |
+| server.metrics.serviceMonitor.namespace | string | `""` |  |
+| server.metrics.serviceMonitor.annotations | object | `{}` |  |
+| server.metrics.serviceMonitor.labels | object | `{}` |  |
+| server.metrics.serviceMonitor.jobLabel | string | `""` |  |
+| server.metrics.serviceMonitor.honorLabels | bool | `false` |  |
+| server.metrics.serviceMonitor.interval | string | `""` |  |
+| server.metrics.serviceMonitor.scrapeTimeout | string | `""` |  |
+| server.metrics.serviceMonitor.metricRelabelings | list | `[]` |  |
+| server.metrics.serviceMonitor.relabelings | list | `[]` |  |
+| server.metrics.serviceMonitor.selector | object | `{}` |  |
 | server.autoscaling.enabled | bool | `false` |  |
 | server.autoscaling.minReplicas | int | `1` |  |
 | server.autoscaling.maxReplicas | int | `100` |  |
