@@ -11,6 +11,19 @@ annotations:
     - name: uc-server
       image: greypavan/unity-catalog:main
 
+keywords:
+- unity-catalog
+- uc
+- big-data
+- kubernetes
+- uc-ha
+- uc-mysql
+- uc-psql
+
+maintainers:
+- name: Pavan Kumar.
+  email: emailtopavankumar.a@gmail.com
+
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
