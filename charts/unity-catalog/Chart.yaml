@@ -2,6 +2,15 @@ apiVersion: v2
 name: unity-catalog
 description: A Helm chart for Kubernetes
 
+annotations:
+  category: Infrastructure
+  licenses: Apache-2.0
+  images: |
+    - name: ui
+      image: greypavan/unity-catalog-ui:main
+    - name: uc-server
+      image: greypavan/unity-catalog:main
+
 # A chart can be either an 'application' or a 'library' chart.
 #
 # Application charts are a collection of templates that can be packaged into versioned archives
@@ -22,3 +31,17 @@ version: 0.1.0
 # follow Semantic Versioning. They should reflect the version the application is using.
 # It is recommended to use it with quotes.
 appVersion: "1.16.0"
+
+dependencies:
+- name: mysql
+  repository: oci://registry-1.docker.io/bitnamicharts
+  condition: server.mysql.enabled
+  version: 12.x.x
+- name: postgresql
+  repository: oci://registry-1.docker.io/bitnamicharts
+  condition: server.postgresql.enabled
+  version: 12.x.x
+- name: postgresql-ha
+  repository: oci://registry-1.docker.io/bitnamicharts
+  condition: server.postgresql-ha.enabled
+  version: 15.x.x
