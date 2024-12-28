@@ -4,6 +4,20 @@
 
 A Helm chart for Kubernetes
 
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| Pavan Kumar. | <emailtopavankumar.a@gmail.com> |  |
+
+## Requirements
+
+| Repository | Name | Version |
+|------------|------|---------|
+| oci://registry-1.docker.io/bitnamicharts | mysql | 12.x.x |
+| oci://registry-1.docker.io/bitnamicharts | postgresql | 12.x.x |
+| oci://registry-1.docker.io/bitnamicharts | postgresql-ha | 15.x.x |
+
 ## Values
 
 | Key | Type | Default | Description |
@@ -34,11 +48,14 @@ A Helm chart for Kubernetes
 | server.livenessProbe.httpGet.port | string | `"http"` |  |
 | server.livenessProbe.periodSeconds | int | `60` |  |
 | server.livenessProbe.timeoutSeconds | int | `10` |  |
+| server.mysql.enabled | bool | `false` |  |
 | server.nameOverride | string | `""` |  |
 | server.nodeSelector | object | `{}` |  |
 | server.podAnnotations | object | `{}` |  |
 | server.podLabels | object | `{}` |  |
 | server.podSecurityContext | object | `{}` |  |
+| server.postgresql-ha.enabled | bool | `false` |  |
+| server.postgresql.enabled | bool | `false` |  |
 | server.readinessProbe.httpGet.path | string | `"/"` |  |
 | server.readinessProbe.httpGet.port | string | `"http"` |  |
 | server.readinessProbe.periodSeconds | int | `60` |  |

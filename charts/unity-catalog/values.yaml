@@ -215,6 +215,19 @@ server:
 
   affinity: {}
 
+  # To configure the UC Catalog to use MYSQL as its backend. Set this to true when the server replicaCount > 1
+  mysql:
+    enabled: false
+
+  # To configure the UC Catalog to use Postgres SQL as its backend. Set this to true when the server replicaCount > 1 
+  postgresql:
+    enabled: false
+
+  # To configure the UC Catalog to use Postgres SQL HA as its backend. Set this to true when the server replicaCount > 1 
+
+  postgresql-ha:
+    enabled: false
+
 
 ui:
   # Create Web UI for Unity Catalog
