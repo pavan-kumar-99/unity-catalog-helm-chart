@@ -1,0 +1,46 @@
+apiVersion: v1
+entries:
+  unity-catalog:
+  - annotations:
+      category: Infrastructure
+      images: |
+        - name: ui
+          image: greypavan/unity-catalog-ui:main
+        - name: uc-server
+          image: greypavan/unity-catalog:main
+      licenses: Apache-2.0
+    apiVersion: v2
+    appVersion: 1.16.0
+    created: "2024-12-28T07:52:24.980055773Z"
+    dependencies:
+    - condition: server.mysql.enabled
+      name: mysql
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 12.x.x
+    - condition: server.postgresql.enabled
+      name: postgresql
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 12.x.x
+    - condition: server.postgresql-ha.enabled
+      name: postgresql-ha
+      repository: oci://registry-1.docker.io/bitnamicharts
+      version: 15.x.x
+    description: A Helm chart for Kubernetes
+    digest: b35189d5b4847c3232673b6d9fa7b17d6be5be77b795d14413d1b0df26fb68c5
+    keywords:
+    - unity-catalog
+    - uc
+    - big-data
+    - kubernetes
+    - uc-ha
+    - uc-mysql
+    - uc-psql
+    maintainers:
+    - email: emailtopavankumar.a@gmail.com
+      name: Pavan Kumar.
+    name: unity-catalog
+    type: application
+    urls:
+    - https://github.com/pavan-kumar-99/unity-catalog-helm-chart/releases/download/unity-catalog-0.1.0/unity-catalog-0.1.0.tgz
+    version: 0.1.0
+generated: "2024-12-28T07:52:24.980066393Z"
