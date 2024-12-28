@@ -19,7 +19,7 @@ server:
   fullnameOverride: ""
   # Custom config
   conf:
-    createCustomConfig: true
+    createCustomConfig: false
 
     log4j2: |-
       status = warn
