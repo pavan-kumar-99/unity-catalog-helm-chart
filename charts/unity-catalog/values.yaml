@@ -20,7 +20,7 @@ server:
   ##    imagePullPolicy: Always
   ##    command: ['sh', '-c', 'echo "hello world"']
 
-  # Extra JARS to be downloaded from Maven repo
+  # Extra JARS to be downloaded from Maven repo through CURL
   extraJars:
   - name: "mysql-connector-j"
     version: 9.1.0
