@@ -4,6 +4,12 @@
 
 A Helm chart for Kubernetes
 
+## Maintainers
+
+| Name | Email | Url |
+| ---- | ------ | --- |
+| Pavan Kumar. | <emailtopavankumar.a@gmail.com> |  |
+
 ## Requirements
 
 | Repository | Name | Version |
