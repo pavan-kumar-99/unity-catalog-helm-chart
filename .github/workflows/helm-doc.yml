@@ -11,4 +11,7 @@ jobs:
     - name: Run helm-docs
       uses: losisin/helm-docs-github-action@v1
       with:
+        output-file: ./../README.md
+        template-files: ./README.md.gotmpl
+        sort-values-order: file
         git-push: true
